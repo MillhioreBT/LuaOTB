@@ -1,5 +1,5 @@
 # LuaOTB
-This is a small items.otb program for read/write and is compatible with TFS master written in Python and packaged with pyinstaller to make it portable.
+This is a small items.otb program for read/write and is compatible with [TFS master](https://github.com/otland/forgottenserver) written in Python and packaged with pyinstaller to make it portable.
 
 ## Usage
 Prepare your `main.lua` file for the task you need and then run `LuaOTB.exe`
