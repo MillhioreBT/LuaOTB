@@ -1,194 +1,174 @@
-# LuaOTB
-This is a small items.otb program for read/write and is compatible with [TFS master](https://github.com/otland/forgottenserver) written in Python and packaged with pyinstaller to make it portable.
 
-Only works on Windows x64
+# LuaOTB
+
+A Lua-based program for reading and writing Tibia .otb, .dat, and .spr files. This tool provides a complete API for analyzing and modifying Tibia client and server files, making it easy to work with items, sprites, and game data.
+
+## Installation
+
+### Windows x64 (Recommended)
+
+1. Download the latest release or clone this repository
+2. Run the installer as administrator:
+   ```cmd
+   install.bat
+   ```
+3. Close all terminal windows and open a new one to use the `luaotb` command globally
+
+### Manual Installation
+
+1. Extract the files to your desired directory
+2. Add the directory to your system PATH
+3. Run `luaotb.exe` from any terminal
 
 ## Usage
-Prepare your `main.lua` file for the task you need and then run `LuaOTB.exe`
 
-<details>
+### Basic Usage
 
-<summary> Read and Write - Header </summary>
+```cmd
+luaotb script.lua
+```
 
-### How to open an OTB file?
+Run your Lua script with full access to the OTB, DAT, and SPR APIs.
+
+### Command Line Examples
+
+```cmd
+# Analyze an items.otb file
+luaotb analyze_items.lua
+
+# Convert sprites to images
+luaotb extract_sprites.lua
+
+# Modify item properties
+luaotb modify_items.lua
+```
+
+## API Reference
+
+LuaOTB provides three main classes for working with Tibia files:
+
+### OTB Class - Server Items
+
+The OTB class handles server-side item definitions:
+
 ```lua
+-- Create and load an OTB file
 local otb = OTB()
 otb:load("items.otb")
 
-print(otb.majorVersion)
-print(otb.minorVersion)
-print(otb.buildVersion)
-print(otb.description)
-```
-*The console output should look something like this:*
+-- Access item properties
+print("OTB Version:", otb.major_version, otb.minor_version, otb.build_version)
+print("Total items:", otb:get_item_types_count())
 
-![image](https://user-images.githubusercontent.com/28090948/216741932-bcd1bce6-aa63-4395-ba24-45b1c1a3af7f.png)
-
-*You can also modify these variables to customize the file header:*
-```lua
-local otb = OTB()
-otb:load("items.otb")
-
-otb.minorVersion = 10
-otb.majorVersion = 20
-otb.buildVersion = 1
-otb.description = "My Custom OTB"
-
-otb:save("items_out.otb")
-```
-
-*How to see if the changes happened?*
-```lua
-local otb = OTB()
-otb:load("items_out.otb")
-
-print(otb.minorVersion)
-print(otb.majorVersion)
-print(otb.buildVersion)
-print(otb.description)
-```
-
-![image](https://user-images.githubusercontent.com/28090948/216744700-35a324fa-2bff-461a-9392-598ad0f4a66d.png)
-
-</details>
-
-<details>
-
-<summary> Read and Write - ItemTypes </summary>
-
-### How to find an item to review or modify it?
-```lua
-local otb = OTB()
-otb:load("items.otb")
-
-local itemType = otb:getItemType(2160)
-print(itemType)
-
--- modify the item
-itemType.NAME = "My new name"
-itemType.CLIENT_ID = 6666
-
-otb:save("items_out.otb")
-```
-*The console output should look something like this:*
-
-![image](https://user-images.githubusercontent.com/28090948/216742198-3f26486c-ec4b-4ca6-b716-03dd2eec52f4.png)
-
-*You should also see a new items_out.otb file in the directory.*
-
-![image](https://user-images.githubusercontent.com/28090948/216742286-db68b091-6513-499e-85f4-7333832cd7e7.png)
-
-### How to know if the new file actually has the changes?
-*You can open the new OTB and review it.*
-```lua
-local otb = OTB()
-otb:load("items_out.otb")
-
-local itemType = otb:getItemType(2160)
-print(itemType)
-```
-*The console output should look something like this:*
-
-![image](https://user-images.githubusercontent.com/28090948/216742391-30b74a43-11e0-4699-84f3-87122538876c.png)
-
-### How to add new items or maybe remove them?
-```lua
-local otb = OTB()
-otb:load("items_out.otb")
-
-local itemType = ItemType()
-itemType.GROUP = 1
-itemType.FLAGS = 0
-itemType.NAME = "My new item"
-itemType.SERVER_ID = 6666
-itemType.CLIENT_ID = 6666
-
-otb:addItemType(itemType)
-otb:save("items_out.otb")
-```
-*To remove them you can use the method `removeItemType`*
-```lua
-local otb = OTB()
-otb:load("items_out.otb")
-
-otb:removeItemType(2160)
-otb:save("items_out.otb")
-```
-
-### How to know the count of items?
-```lua
-local otb = OTB()
-otb:load("items_out.otb")
-
-print(otb:getItemTypesCount())
-```
-
-![image](https://user-images.githubusercontent.com/28090948/216743869-ccd6d03d-565f-4336-ae77-0b8a4d6ea4dd.png)
-
-### How to iterate over all items?
-```lua
-local otb = OTB()
-otb:load("items_out.otb")
-
-local items = {}
-for itemType in python.iter(otb.itemTypes) do
-	if itemType.GROUP == 1 then
-		items[#items + 1] = itemType
-	end
+-- Get item by server ID
+local item = otb:get_item_type_by_server_id(2148) -- gold coin
+if item then
+    print("Item name:", item.name)
+    print("Client ID:", item.client_id)
 end
 
-print(string.format("Found %d items", #items))
+-- Iterate through all items
+for item_type in python.iter(otb) do
+    print("Server ID:", item_type.server_id, "Name:", item_type.name)
+end
 ```
-![image](https://user-images.githubusercontent.com/28090948/216743957-88fc4e6c-6edd-43a3-afa6-35074bf376e2.png)
 
-</details>
+### DAT Class - Client Objects
 
-<details>
-
-<summary> ItemType - Variables </summary>
-
-### These are all the internal variables of ItemType
-*It is worth mentioning that you cannot add new attributes, only modify existing ones!*
+The DAT class manages client-side object definitions:
 
 ```lua
-GROUP - number
-FLAGS - number
-SERVER_ID - number
-CLIENT_ID - number
-NAME - string
-DESCRIPTION - string
-SPEED - number
-SLOT - number
-CONTAINER_SIZE - number
-WEIGHT - number
-WEAPON - number
-AMMUNITION - number
-ARMOR - number
-MAGIC_LEVEL - number
-MAGIC_FIELD_TYPE - number
-WRITABLE - number
-ROTATE_TO - number
-DECAY - number
-SPRITE_HASH - table
-MINIMAP_COLOR - number
-MAX_TEXT_LENGTH - number
-MAX_TEXT_LENGTH_ONCE - number
-LIGHT - number
-DECAY2 - number
-WEAPON2 - number
-AMMUNITION2 - number
-ARMOR2 - number
-WRITABLE2 - number
-LIGHT2 - table
-TOP_ORDER - number
-WRITABLE3 - number
-WARE_ID - number
-CLASSIFICATION - number
-ARTICLE - string
-CATEGORY - number
+-- Load DAT file
+local dat = DAT()
+dat:load("Tibia.dat", ClientVersion.Format_1100)
+
+print("Items count:", dat.items_count)
+print("Client version:", dat.version)
+
+-- Get client item
+local client_item = dat:get_item_by_id(2148)
+print("Sprites:", client_item.num_sprites)
+print("Dimensions:", client_item.width, "x", client_item.height)
 ```
 
-</details>
+### SPR Class - Sprites
+
+The SPR class handles sprite data:
+
+```lua
+-- Load sprite file
+local spr = SPR()
+spr:load("Tibia.spr", true, true) -- extended, transparent
+
+-- Connect DAT with SPR for complete functionality
+dat:connect_spr(spr)
+
+-- Extract sprite as image
+local sprite = spr:get_sprite(1000)
+if sprite then
+    sprite:save("sprite_1000.png")
+end
+```
+
+### Complete Example
+
+```lua
+-- Load all three file types
+local otb = OTB()
+local dat = DAT()
+local spr = SPR()
+
+-- Load files
+otb:load("items.otb")
+dat:load("Tibia.dat", ClientVersion.Format_1100)
+spr:load("Tibia.spr", true, true)
+
+-- Connect DAT and SPR
+dat:connect_spr(spr)
+
+-- Find items with specific properties
+for item_type in python.iter(otb) do
+    if item_type.client_id and item_type.client_id > 0 then
+        local client_item = dat:get_item_by_id(item_type.client_id)
+        
+        if client_item and client_item.num_sprites > 0 then
+            print(string.format("Item: %s (Server: %d, Client: %d, Sprites: %d)", 
+                item_type.name or "Unknown", 
+                item_type.server_id, 
+                item_type.client_id, 
+                client_item.num_sprites))
+        end
+    end
+end
+```
+
+### Available Enumerations
+
+```lua
+-- Client versions
+ClientVersion.Format_1100  -- Latest supported
+ClientVersion.Format_1092
+-- ... more versions available
+
+-- Item flags
+ItemFlags.STACKABLE
+ItemFlags.MOVEABLE
+ItemFlags.USEABLE
+-- ... more flags available
+
+-- Thing categories
+ThingCategory.Item
+ThingCategory.Creature
+ThingCategory.Effect
+ThingCategory.Missile
+```
+
+## System Requirements
+
+- Windows x64
+- Compatible with [TFS master](https://github.com/otland/forgottenserver)
 
 ## Notes
-If you are interested in a more complete program you can choose to use [LapisItemEditor](https://github.com/giuinktse7/LapisItemEditor)
+
+If you need a more complete graphical program, consider using [LapisItemEditor](https://github.com/giuinktse7/LapisItemEditor).
+
