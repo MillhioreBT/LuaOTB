@@ -3,6 +3,8 @@
 
 A Lua-based program for reading and writing Tibia .otb, .dat, and .spr files. This tool provides a complete API for analyzing and modifying Tibia client and server files, making it easy to work with items, sprites, and game data.
 
+<img width="516" height="267" alt="image" src="https://github.com/user-attachments/assets/3cd4bafc-14d3-4ad4-837e-8827ed668cc1" />
+
 ## Installation
 
 ### Windows x64 (Recommended)
