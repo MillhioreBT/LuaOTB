@@ -192,6 +192,8 @@ ItemType = {}
 ---@field num_sprites integer Number of sprites
 ---@field sprites integer[] List of sprite IDs
 ---@field attributes table Object attributes
+---@field is_marketable fun(self:ClientThing): boolean Function to check if the object is marketable
+---@field get_market_data fun(self:ClientThing): MarketData? Function to get the market data
 ---@overload fun(): ClientThing
 ClientThing = {}
 
@@ -208,6 +210,25 @@ function ClientThing:unserialize(spr, buffer, version, dat) end
 ---@param extended boolean Extended format
 ---@param enhanced_animations boolean Enhanced animations
 function ClientThing:serialize(buffer, version, extended, enhanced_animations) end
+
+---Checks if the object has a specific attribute
+---@param attr ClientThingAttr Attribute to check
+---@return boolean has_attr True if the object has the attribute
+function ClientThing:has_attr(attr) end
+
+---Gets the value of a specific attribute
+---@param attr ClientThingAttr Attribute to get
+---@return any value Value of the attribute or nil if not set
+function ClientThing:get_attr(attr) end
+
+---Sets the value of a specific attribute
+---@param attr ClientThingAttr Attribute to set
+---@param value any Value to set
+function ClientThing:set_attr(attr, value) end
+
+---Removes a specific attribute from the object
+---@param attr ClientThingAttr Attribute to remove
+function ClientThing:remove_attr(attr) end
 
 ---@class MarketData
 ---@field category integer Market category
@@ -340,6 +361,56 @@ ItemFlags = {
 	ANIMATION = 1 << 24,
 	FULLTILE = 1 << 25,
 	FORCEUSE = 1 << 26
+}
+
+---Enumeration of client thing attributes
+---@enum ClientThingAttr
+ClientThingAttr = {
+	ground = 0,
+	ground_border = 1,
+	on_bottom = 2,
+	on_top = 3,
+	container = 4,
+	stackable = 5,
+	force_use = 6,
+	multi_use = 7,
+	writable = 8,
+	writable_once = 9,
+	fluid_container = 10,
+	splash = 11,
+	not_walkable = 12,
+	not_moveable = 13,
+	block_projectile = 14,
+	not_pathable = 15,
+	pickupable = 16,
+	hangable = 17,
+	hook_south = 18,
+	hook_east = 19,
+	rotateable = 20,
+	light = 21,
+	dont_hide = 22,
+	translucent = 23,
+	displacement = 24,
+	elevation = 25,
+	lying_corpse = 26,
+	animate_always = 27,
+	minimap_color = 28,
+	lens_help = 29,
+	full_ground = 30,
+	look = 31,
+	cloth = 32,
+	market = 33,
+	usable = 34,
+	wrapable = 35,
+	unwrapable = 36,
+	top_effect = 37,
+	bones = 38,
+	opacity = 100,
+	not_pre_walkable = 101,
+	floor_change = 252,
+	no_movement_animation = 253,
+	chargeable = 254,
+	default = 255
 }
 
 ---@class LupaObject:table
