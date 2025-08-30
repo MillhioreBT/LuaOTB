@@ -175,6 +175,10 @@ function SPR:get_sprite(id) end
 ---@field classification integer|nil Classification
 ---@field article string|nil Article
 ---@field category integer|nil Category
+---@field clone fun(self:ItemType): ItemType Function to clone the item type
+---@field has_flag fun(self:ItemType, flags:ItemFlags): boolean Function to check if the item has a specific flag
+---@field add_flags fun(self:ItemType, flags:ItemFlags) Function to add a specific flag to the item
+---@field remove_flags fun(self:ItemType, flags:ItemFlags) Function to remove a specific flag from the item
 ---@overload fun(): ItemType
 ItemType = {}
 
